@@ -1,1 +1,23 @@
 .env
+
+# Virtual environment
+rag-app/
+venv/
+.venv/
+.venv310/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Build artifacts
+*.egg-info/
+dist/
+build/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# VS Code
+.vscode/

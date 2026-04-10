@@ -2,8 +2,8 @@
 # Import necessary libraries and modules
 from flask import Flask, render_template, jsonify, request  # Flask web framework
 from src.helper import download_hugging_face_embeddings    # Custom helper for embeddings
-from langchain_pinecone import PineconeVectorStore         # Pinecone vector store integration
-from langchain_openai import ChatOpenAI                    # OpenAI chat model integration
+from langchain_pinecone import Pinecone as PineconeVectorStore         # Pinecone vector store integration (langchain-pinecone==0.0.1)
+from langchain_groq import ChatGroq                        # Groq chat model integration
 from langchain.chains import create_retrieval_chain        # Retrieval chain for RAG
 from langchain.chains.combine_documents import create_stuff_documents_chain # Combine docs
 from langchain_core.prompts import ChatPromptTemplate      # Prompt template for LLM
@@ -24,11 +24,11 @@ load_dotenv()
 
 # Retrieve API keys from environment
 PINECONE_API_KEY = os.environ.get('PINECONE_API_KEY')
-OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
+GROQ_API_KEY = os.environ.get('GROQ_API_KEY')
 
 # Set API keys in environment (for libraries that read directly from os.environ)
 os.environ["PINECONE_API_KEY"] = PINECONE_API_KEY
-os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
+os.environ["GROQ_API_KEY"] = GROQ_API_KEY
 
 
 
@@ -52,8 +52,8 @@ docsearch = PineconeVectorStore.from_existing_index(
 # Create a retriever for semantic search (top 3 similar results)
 retriever = docsearch.as_retriever(search_type="similarity", search_kwargs={"k": 3})
 
-# Initialize the OpenAI chat model (GPT-4o)
-chatModel = ChatOpenAI(model="gpt-4o")
+# Initialize the Groq chat model (free tier, high rate limits)
+chatModel = ChatGroq(model="llama-3.1-8b-instant", api_key=GROQ_API_KEY)
 
 # Define the prompt template for the chat model
 prompt = ChatPromptTemplate.from_messages(
